@@ -9,8 +9,14 @@ interface Notice {
   description: string;
 }
 
+const fallbackNotices = [
+  { id: 1, title: 'Building Updates', description: 'View the latest building maintenance and improvement updates.' },
+  { id: 2, title: 'Community Announcements', description: 'Read important announcements from the strata committee.' },
+  { id: 3, title: 'Emergency Notices', description: 'Access critical information and emergency notifications.' }
+];
+
 export default function NoticesPage() {
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<Notice[]>(fallbackNotices);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +29,7 @@ export default function NoticesPage() {
           .select('*')
           .order('id', { ascending: true });
         if (error) throw error;
-        setNotices(data);
+        setNotices(data.length > 0 ? data : fallbackNotices);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -45,7 +51,6 @@ export default function NoticesPage() {
           <p className="text-gray-600">{description}</p>
         </div>
       ))}
-      {notices.length === 0 && <p>No notices found.</p>}
     </div>
   );
 } 
