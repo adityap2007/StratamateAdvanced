@@ -9,10 +9,12 @@ export default function ContactPage() {
     message: ''
   });
   const [status, setStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus(null);
+    setIsSubmitting(true);
 
     const formDataObj = new FormData();
     formDataObj.append('name', formData.name);
@@ -22,7 +24,10 @@ export default function ContactPage() {
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        body: formDataObj
+        body: formDataObj,
+        headers: {
+          'Accept': 'application/json',
+        }
       });
 
       const data = await response.json();
@@ -31,10 +36,13 @@ export default function ContactPage() {
         setStatus({ type: 'success', message: data.success });
         setFormData({ name: '', email: '', message: '' });
       } else {
-        setStatus({ type: 'error', message: data.error });
+        setStatus({ type: 'error', message: data.error || 'An error occurred. Please try again.' });
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       setStatus({ type: 'error', message: 'An error occurred. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -68,6 +76,7 @@ export default function ContactPage() {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border rounded"
+            disabled={isSubmitting}
           />
         </div>
         
@@ -81,6 +90,7 @@ export default function ContactPage() {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border rounded"
+            disabled={isSubmitting}
           />
         </div>
         
@@ -93,14 +103,20 @@ export default function ContactPage() {
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border rounded h-32"
+            disabled={isSubmitting}
           />
         </div>
         
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          className={`w-full py-2 px-4 rounded ${
+            isSubmitting 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-500 hover:bg-blue-600'
+          } text-white`}
+          disabled={isSubmitting}
         >
-          Send Message
+          {isSubmitting ? 'Sending...' : 'Send Message'}
         </button>
       </form>
     </div>

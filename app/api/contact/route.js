@@ -6,9 +6,9 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const supabase = await getDbConnection();
-  
   try {
+    const supabase = await getDbConnection();
+    
     const formData = await request.formData();
     const name = formData.get('name');
     const email = formData.get('email');
@@ -17,7 +17,14 @@ export async function POST(request) {
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: 'Please fill in all fields' },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
       );
     }
 
@@ -33,17 +40,42 @@ export async function POST(request) {
       ]);
 
     if (error) {
+      console.error('Supabase error:', error);
       throw error;
     }
 
     return NextResponse.json({
       success: "Thank you for your message! We'll get back to you soon."
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
     });
   } catch (error) {
     console.error('Contact form error:', error);
     return NextResponse.json(
       { error: 'Sorry, there was an error submitting your message. Please try again later.' },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     );
   }
+}
+
+// Handle OPTIONS request for CORS
+export async function OPTIONS() {
+  return NextResponse.json({}, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    }
+  });
 } 
