@@ -16,6 +16,11 @@
       }
     },
     {
+      "src": "/api/(.*)",
+      "dest": "/api/$1",
+      "continue": true
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
