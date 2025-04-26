@@ -2,32 +2,25 @@
   "version": 2,
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
-  "routes": [
+  "framework": "nextjs",
+  "rewrites": [
     {
-      "src": "/api/(.*)\\.php$",
-      "dest": "/php-api/$1.php",
-      "headers": {
-        "Content-Type": "text/html; charset=UTF-8",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      }
+      "source": "/api/:path*.php",
+      "destination": "/php-api/:path.php"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1",
-      "continue": true
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ],
-  "framework": "nextjs",
   "headers": [
     {
-      "source": "/api/(.*)\\.php$",
+      "source": "/api/:path*.php",
       "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=UTF-8"
+        },
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
