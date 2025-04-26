@@ -10,18 +10,19 @@ const navItems = {
   '/committee': 'Committee Members',
   '/statistics': 'Statistics',
   '/form': 'Contact Form',
-  '/api/contact.php': 'Contact Us (PHP)'
+  '/contact': 'Contact Us',
+  '/api/about.php': 'About Us (PHP)'
  }
 
 export default function Navbar() {
-  // Get the base URL for the PHP contact page
-  const getPhpContactUrl = () => {
+  // Get the base URL for the PHP about page
+  const getPhpAboutUrl = () => {
     if (typeof window !== 'undefined') {
       // In the browser, use the current origin
-      return `${window.location.origin}/api/contact.php`;
+      return `${window.location.origin}/api/about.php`;
     }
     // During server-side rendering, use a relative path
-    return '/api/contact.php';
+    return '/api/about.php';
   };
 
   return (
@@ -34,13 +35,23 @@ export default function Navbar() {
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {Object.entries(navItems).map(([path, name]) => (
-                <a
-                  key={path}
-                  href={path === '/api/contact.php' ? getPhpContactUrl() : path}
-                  className="inline-flex items-center px-1 pt-1 text-gray-900 hover:text-gray-500"
-                >
-                  {name}
-                </a>
+                path === '/api/about.php' ? (
+                  <a
+                    key={path}
+                    href={getPhpAboutUrl()}
+                    className="inline-flex items-center px-1 pt-1 text-gray-900 hover:text-gray-500"
+                  >
+                    {name}
+                  </a>
+                ) : (
+                  <Link
+                    key={path}
+                    href={path}
+                    className="inline-flex items-center px-1 pt-1 text-gray-900 hover:text-gray-500"
+                  >
+                    {name}
+                  </Link>
+                )
               ))}
             </div>
           </div>
