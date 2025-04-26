@@ -75,29 +75,31 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="sm:hidden">
-        <div className="overflow-x-auto whitespace-nowrap py-2 px-4">
-          <div className="flex space-x-4">
-            {Object.entries(navItems).map(([path, name]) => (
-              path === '/api/about.php' ? (
-                <a
-                  key={path}
-                  href={getPhpAboutUrl()}
-                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-gray-500"
-                >
-                  {name}
-                </a>
-              ) : (
-                <Link
-                  key={path}
-                  href={path}
-                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-gray-500"
-                >
-                  {name}
-                </Link>
-              )
-            ))}
+      {/* Navigation Box */}
+      <div className="border-t border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="overflow-x-auto nav-scrollbar nav-container">
+            <div className="flex space-x-4 py-2 px-4 min-w-max">
+              {Object.entries(navItems).map(([path, name]) => (
+                path === '/api/about.php' ? (
+                  <a
+                    key={path}
+                    href={getPhpAboutUrl()}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-gray-500 bg-gray-50 rounded-md whitespace-nowrap hover:bg-gray-100 transition-colors"
+                  >
+                    {name}
+                  </a>
+                ) : (
+                  <Link
+                    key={path}
+                    href={path}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-gray-500 bg-gray-50 rounded-md whitespace-nowrap hover:bg-gray-100 transition-colors"
+                  >
+                    {name}
+                  </Link>
+                )
+              ))}
+            </div>
           </div>
         </div>
       </div>
