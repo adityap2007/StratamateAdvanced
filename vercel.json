@@ -2,11 +2,6 @@
   "version": 2,
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
-  "functions": {
-    "php-api/**/*.php": {
-      "runtime": "vercel-php@0.6.0"
-    }
-  },
   "routes": [
     {
       "src": "/api/(.*)\\.php$",
@@ -24,5 +19,6 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ]
+  ],
+  "framework": "nextjs"
 }
