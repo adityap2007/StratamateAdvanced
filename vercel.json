@@ -7,7 +7,7 @@
       "runtime": "now-php@1.0.0"
     },
     "api/**/*.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "now-node@18.0.0"
     }
   },
   "routes": [
