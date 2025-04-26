@@ -9,10 +9,21 @@ const navItems = {
   '/events': 'Events',
   '/committee': 'Committee Members',
   '/statistics': 'Statistics',
-  '/form': 'Contact Form'
+  '/form': 'Contact Form',
+  '/api/contact.php': 'Contact Us (PHP)'
  }
 
 export default function Navbar() {
+  // Get the base URL for the PHP contact page
+  const getPhpContactUrl = () => {
+    if (typeof window !== 'undefined') {
+      // In the browser, use the current origin
+      return `${window.location.origin}/api/contact.php`;
+    }
+    // During server-side rendering, use a relative path
+    return '/api/contact.php';
+  };
+
   return (
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
@@ -25,7 +36,7 @@ export default function Navbar() {
               {Object.entries(navItems).map(([path, name]) => (
                 <a
                   key={path}
-                  href={path}
+                  href={path === '/api/contact.php' ? getPhpContactUrl() : path}
                   className="inline-flex items-center px-1 pt-1 text-gray-900 hover:text-gray-500"
                 >
                   {name}
