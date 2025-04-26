@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../lib/db';
 
 interface Event {
   id: number;
@@ -13,27 +14,7 @@ interface Event {
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: 'Community BBQ',
-      date: '2024-04-15',
-      time: '12:00',
-      location: 'Rooftop Garden',
-      description: 'Join us for our monthly community BBQ!',
-      attendees: 32
-    },
-    {
-      id: 2,
-      title: 'Residents Meeting',
-      date: '2024-04-20',
-      time: '18:30',
-      location: 'Common Room',
-      description: 'Monthly residents meeting to discuss building matters.',
-      attendees: 25
-    }
-  ]);
-
+  const [events, setEvents] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newEvent, setNewEvent] = useState<Omit<Event, 'id' | 'attendees'>>({
     title: '',
@@ -42,25 +23,61 @@ export default function EventsPage() {
     location: '',
     description: ''
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('date', { ascending: true });
+        if (error) throw error;
+        setEvents(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+  }, []);
+
+  if (loading) return <div className="py-8 text-center">Loading events...</div>;
+  if (error) return <div className="p-4 bg-red-100 text-red-700">Error: {error}</div>;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const event = {
-      ...newEvent,
-      id: Date.now(),
-      attendees: 0
-    };
-    setEvents([...events, event]);
-    setNewEvent({ title: '', date: '', time: '', location: '', description: '' });
-    setShowForm(false);
+    setError(null);
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .insert([{ ...newEvent, attendees: 0 }])
+        .single();
+      if (error) throw error;
+      setEvents(prev => [...prev, data]);
+      setNewEvent({ title: '', date: '', time: '', location: '', description: '' });
+      setShowForm(false);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
-  const handleAttend = (eventId: number) => {
-    setEvents(events.map(event =>
-      event.id === eventId
-        ? { ...event, attendees: event.attendees + 1 }
-        : event
-    ));
+  const handleAttend = async (eventId: number) => {
+    try {
+      const ev = events.find(ev => ev.id === eventId);
+      const { data, error } = await supabase
+        .from('events')
+        .update({ attendees: (ev?.attendees || 0) + 1 })
+        .eq('id', eventId)
+        .single();
+      if (error) throw error;
+      setEvents(prev => prev.map(ev => ev.id === eventId ? data : ev));
+    } catch (err: any) {
+      console.error(err.message);
+    }
   };
 
   return (
