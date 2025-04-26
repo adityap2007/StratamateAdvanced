@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { supabase } from '../../lib/db';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,31 +16,15 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus(null);
     setIsSubmitting(true);
-
-    const formDataObj = new FormData();
-    formDataObj.append('name', formData.name);
-    formDataObj.append('email', formData.email);
-    formDataObj.append('message', formData.message);
-
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        body: formDataObj,
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus({ type: 'success', message: data.success });
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        setStatus({ type: 'error', message: data.error || 'An error occurred. Please try again.' });
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([{ name: formData.name, email: formData.email, message: formData.message }]);
+      if (error) throw error;
+      setStatus({ type: 'success', message: "Thank you for your message! We'll get back to you soon." });
+      setFormData({ name: '', email: '', message: '' });
+    } catch (err) {
+      console.error('Form submission error:', err);
       setStatus({ type: 'error', message: 'An error occurred. Please try again.' });
     } finally {
       setIsSubmitting(false);
