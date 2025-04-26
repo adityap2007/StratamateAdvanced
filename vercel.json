@@ -6,11 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*.php",
-      "destination": "/php-api/:path.php"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "destination": "/api/php-runner?file=:path.php"
     }
   ],
   "headers": [
