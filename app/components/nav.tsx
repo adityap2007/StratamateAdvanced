@@ -27,6 +27,9 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
+      <div className="px-4 py-2">
+        <span className="text-xl font-bold">Stratamate</span>
+      </div>
       {/* Navigation Box */}
       <div className="border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
