@@ -7,7 +7,10 @@
       "src": "/api/(.*)\\.php$",
       "dest": "/php-api/$1.php",
       "headers": {
-        "Content-Type": "text/html; charset=UTF-8"
+        "Content-Type": "text/html; charset=UTF-8",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
       }
     },
     {
@@ -20,5 +23,24 @@
       "dest": "/$1"
     }
   ],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "headers": [
+    {
+      "source": "/api/(.*)\\.php$",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type"
+        }
+      ]
+    }
+  ]
 }
