@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { env } from '../lib/env';
 import { supabase } from '../../lib/db';
 
 interface Statistics {
@@ -27,37 +26,49 @@ export default function StatisticsPage() {
   const [messageCount, setMessageCount] = useState<number>(0);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    async function loadStats() {
+      setLoading(true);
       try {
-        const response = await fetch(`${env.apiUrl}/statistics.php`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch statistics');
-        }
-        const data = await response.json();
-        setStats(data.data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        // Total residents
+        const { count: total_residents } = await supabase
+          .from('residents')
+          .select('*', { head: true, count: 'exact' });
+
+        // Maintenance requests
+        const { data: mrData } = await supabase
+          .from('maintenance_requests')
+          .select('priority');
+        const totalReq = mrData.length;
+        const highPriority = mrData.filter((r) => r.priority === 'high').length;
+
+        // Payments
+        const { data: paymentsData } = await supabase
+          .from('payments')
+          .select('amount');
+        const monthlyCount = paymentsData.length;
+        const monthlyAmount = paymentsData.reduce((sum, p) => sum + p.amount, 0);
+
+        setStats({
+          total_residents: total_residents || 0,
+          maintenance_requests: { total: totalReq, high_priority: highPriority },
+          payments: { monthly_count: monthlyCount, monthly_amount: monthlyAmount },
+        });
+
+        // Other metrics
+        const { count: nCount } = await supabase.from('notices').select('*', { head: true, count: 'exact' });
+        setNoticeCount(nCount || 0);
+        const { count: eCount } = await supabase.from('events').select('*', { head: true, count: 'exact' });
+        setEventCount(eCount || 0);
+        const { count: mCount } = await supabase.from('contact_messages').select('*', { head: true, count: 'exact' });
+        setMessageCount(mCount || 0);
+      } catch (err: any) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchStats();
-
-    // Fetch other metrics
-    const fetchCounts = async () => {
-      try {
-        const { data: notices } = await supabase.from('notices').select('id');
-        setNoticeCount(notices?.length || 0);
-        const { data: events } = await supabase.from('events').select('id');
-        setEventCount(events?.length || 0);
-        const { data: messages } = await supabase.from('contact_messages').select('id');
-        setMessageCount(messages?.length || 0);
-      } catch (err) {
-        console.error('Error fetching counts:', err);
-      }
-    };
-    fetchCounts();
+    loadStats();
   }, []);
 
   if (loading) {
