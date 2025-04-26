@@ -6,6 +6,8 @@ export async function GET() {
 }
 
 export async function POST(request) {
+  const prisma = await getDbConnection();
+  
   try {
     const formData = await request.formData();
     const name = formData.get('name');
@@ -19,11 +21,14 @@ export async function POST(request) {
       );
     }
 
-    const pdo = await getDbConnection();
-    const stmt = await pdo.prepare(
-      'INSERT INTO contact_messages (name, email, message, created_at) VALUES (?, ?, ?, NOW())'
-    );
-    await stmt.execute([name, email, message]);
+    await prisma.contactMessage.create({
+      data: {
+        name,
+        email,
+        message,
+        createdAt: new Date()
+      }
+    });
 
     return NextResponse.json({
       success: "Thank you for your message! We'll get back to you soon."
@@ -34,5 +39,7 @@ export async function POST(request) {
       { error: 'Sorry, there was an error submitting your message. Please try again later.' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 } 
