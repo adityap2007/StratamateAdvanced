@@ -9,7 +9,7 @@
   },
   "routes": [
     {
-      "src": "/(.+)\\.php$",
+      "src": "/api/(.*)\\.php$",
       "dest": "/api/$1.php"
     }
   ]
