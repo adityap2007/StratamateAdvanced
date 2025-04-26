@@ -38,15 +38,15 @@ export default function StatisticsPage() {
         const { data: mrData } = await supabase
           .from('maintenance_requests')
           .select('priority');
-        const totalReq = mrData.length;
-        const highPriority = mrData.filter((r) => r.priority === 'high').length;
+        const totalReq = mrData?.length ?? 0;
+        const highPriority = (mrData ?? []).filter((r) => r.priority === 'high').length;
 
         // Payments
         const { data: paymentsData } = await supabase
           .from('payments')
           .select('amount');
-        const monthlyCount = paymentsData.length;
-        const monthlyAmount = paymentsData.reduce((sum, p) => sum + p.amount, 0);
+        const monthlyCount = paymentsData?.length ?? 0;
+        const monthlyAmount = (paymentsData ?? []).reduce((sum, p) => sum + p.amount, 0);
 
         setStats({
           total_residents: total_residents || 0,
