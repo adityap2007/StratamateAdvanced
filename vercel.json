@@ -3,14 +3,14 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "functions": {
-    "api/**/*.php": {
+    "php-api/**/*.php": {
       "runtime": "vercel-php@0.6.0"
     }
   },
   "routes": [
     {
       "src": "/api/(.*)\\.php$",
-      "dest": "/api/$1.php",
+      "dest": "/php-api/$1.php",
       "headers": {
         "Content-Type": "text/html; charset=UTF-8"
       }
