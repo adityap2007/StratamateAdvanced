@@ -1,1 +1,16 @@
-{"version":2,"buildCommand":"npm run build","installCommand":"npm install --legacy-peer-deps","functions":{"api/*.php":{"runtime":"vercel-php@0.6.0"}},"routes":[{"src":"/(.+)\.php$","dest":"/api/$1.php"}]}
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php@0.6.0"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.+)\\.php$",
+      "dest": "/api/$1.php"
+    }
+  ]
+}
