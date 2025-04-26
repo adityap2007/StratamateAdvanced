@@ -19,5 +19,15 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
+  ],
+  "includeFiles": [
+    "package.json",
+    "package-lock.json",
+    "next.config.js",
+    "tsconfig.json",
+    "tailwind.config.js",
+    "postcss.config.js",
+    "app/**",
+    "public/**"
   ]
 }

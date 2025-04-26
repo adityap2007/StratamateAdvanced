@@ -10,17 +10,15 @@ dist
 *.log
 .DS_Store
 
+# Ignore specific files in api directory
+api/*.js
+api/*.ts
+api/*.json
+
 # Allow package.json and other necessary files
 !package.json
 !package-lock.json
 !next.config.js
 !tsconfig.json
 !tailwind.config.js
-!postcss.config.js
-
-# Ignore everything except the api directory
-/*
-!api/
-api/*.js
-api/*.ts
-api/*.json 
+!postcss.config.js 
