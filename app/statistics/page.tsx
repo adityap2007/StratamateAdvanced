@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { env } from '../lib/env';
+import { supabase } from '../../lib/db';
 
 interface Statistics {
   total_residents: number;
@@ -20,6 +21,11 @@ export default function StatisticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Additional metrics
+  const [noticeCount, setNoticeCount] = useState<number>(0);
+  const [eventCount, setEventCount] = useState<number>(0);
+  const [messageCount, setMessageCount] = useState<number>(0);
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -37,6 +43,21 @@ export default function StatisticsPage() {
     };
 
     fetchStats();
+
+    // Fetch other metrics
+    const fetchCounts = async () => {
+      try {
+        const { data: notices } = await supabase.from('notices').select('id');
+        setNoticeCount(notices?.length || 0);
+        const { data: events } = await supabase.from('events').select('id');
+        setEventCount(events?.length || 0);
+        const { data: messages } = await supabase.from('contact_messages').select('id');
+        setMessageCount(messages?.length || 0);
+      } catch (err) {
+        console.error('Error fetching counts:', err);
+      }
+    };
+    fetchCounts();
   }, []);
 
   if (loading) {
@@ -109,6 +130,25 @@ export default function StatisticsPage() {
           </div>
         </div>
       )}
+
+      {/* Other Metrics */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Other Metrics</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2">Notices Posted</h3>
+            <div className="text-3xl font-bold text-purple-600">{noticeCount}</div>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2">Community Events</h3>
+            <div className="text-3xl font-bold text-indigo-600">{eventCount}</div>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2">Messages Received</h3>
+            <div className="text-3xl font-bold text-teal-600">{messageCount}</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
