@@ -13,8 +13,30 @@ interface Event {
   attendees: number;
 }
 
+// Fallback static events
+const fallbackEvents: Event[] = [
+  {
+    id: 1,
+    title: 'Community BBQ',
+    date: '2024-04-15',
+    time: '12:00',
+    location: 'Rooftop Garden',
+    description: 'Join us for our monthly community BBQ!',
+    attendees: 32
+  },
+  {
+    id: 2,
+    title: 'Residents Meeting',
+    date: '2024-04-20',
+    time: '18:30',
+    location: 'Common Room',
+    description: 'Monthly residents meeting to discuss building matters.',
+    attendees: 25
+  }
+];
+
 export default function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Event[]>(fallbackEvents);
   const [showForm, setShowForm] = useState(false);
   const [newEvent, setNewEvent] = useState<Omit<Event, 'id' | 'attendees'>>({
     title: '',
@@ -35,7 +57,7 @@ export default function EventsPage() {
           .select('*')
           .order('date', { ascending: true });
         if (error) throw error;
-        setEvents(data);
+        setEvents(data && data.length > 0 ? data : fallbackEvents);
       } catch (err: any) {
         setError(err.message);
       } finally {
