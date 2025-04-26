@@ -4,7 +4,7 @@
   "installCommand": "npm install --legacy-peer-deps",
   "functions": {
     "api/**/*.php": {
-      "runtime": "now-php@1.0.0"
+      "runtime": "vercel-php@0.6.0"
     }
   },
   "routes": [
