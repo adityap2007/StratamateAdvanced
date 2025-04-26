@@ -15,10 +15,12 @@ api/*.js
 api/*.ts
 api/*.json
 
-# Allow package.json and other necessary files
+# Allow necessary files
 !package.json
 !package-lock.json
 !next.config.js
 !tsconfig.json
 !tailwind.config.js
-!postcss.config.js 
+!postcss.config.js
+!app/
+!public/ 
