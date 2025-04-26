@@ -6,7 +6,7 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const prisma = await getDbConnection();
+  const supabase = await getDbConnection();
   
   try {
     const formData = await request.formData();
@@ -21,14 +21,20 @@ export async function POST(request) {
       );
     }
 
-    await prisma.contactMessage.create({
-      data: {
-        name,
-        email,
-        message,
-        createdAt: new Date()
-      }
-    });
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .insert([
+        {
+          name,
+          email,
+          message,
+          created_at: new Date().toISOString()
+        }
+      ]);
+
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: "Thank you for your message! We'll get back to you soon."
@@ -39,7 +45,5 @@ export async function POST(request) {
       { error: 'Sorry, there was an error submitting your message. Please try again later.' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 
