@@ -1,19 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { supabase } from '../../lib/db';
 
 export default function UserLoginModal() {
-  const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
+  // Only display modal on the home page
+  if (pathname !== '/') return null;
+  const [visible, setVisible] = useState(true);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
   
-  useEffect(() => {
-    // Show modal only once per session
-    if (!localStorage.getItem('userLoginPrompted')) {
-      setVisible(true);
-    }
-  }, []);
+  // Modal is shown on every full page load by default
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,10 +25,10 @@ export default function UserLoginModal() {
     const { error: supaError } = await supabase
       .from('logins')
       .insert([{ user_id: userId }]);
+
     if (supaError) {
       setError('Failed to log you in. Try again.');
     } else {
-      localStorage.setItem('userLoginPrompted', 'true');
       setVisible(false);
     }
   };
