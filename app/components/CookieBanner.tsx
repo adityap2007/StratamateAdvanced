@@ -28,7 +28,12 @@ export default function CookieBanner() {
       const stored = localStorage.getItem('cookieConsent');
       if (stored) {
         const { analytics } = JSON.parse(stored);
-        if (analytics) initAnalytics();
+        if (analytics) {
+          initAnalytics();
+          setVisible(false);
+        } else {
+          setVisible(true);
+        }
       } else {
         setVisible(true);
       }
