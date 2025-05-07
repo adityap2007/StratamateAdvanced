@@ -64,13 +64,12 @@ export default function NoticesPage() {
     try {
       setLoading(true);
       setError(null);
-      
-      // Add a 2-second delay to see the loading state
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Force an error to see the error state
-      throw new Error('Failed to connect to the database');
-      
+      const { data, error } = await supabase
+        .from('notices')
+        .select('*')
+        .order('id', { ascending: true });
+      if (error) throw error;
+      setNotices(data.length > 0 ? data : fallbackNotices);
     } catch (err: any) {
       setError(err.message);
     } finally {
